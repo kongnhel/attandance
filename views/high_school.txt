@@ -1,0 +1,48 @@
+                            <select id="schoolSelect" name="high_school" required class="w-full">
+                                <option value="" disabled selected>ស្វែងរកឈ្មោះវិទ្យាល័យរបស់បង...</option>
+                                <optgroup label="១. ក្រុងសិរីសោភ័ណ">
+                                    <option value="វិទ្យាល័យ សិរីសោភ័ណ">វិទ្យាល័យ សិរីសោភ័ណ</option>
+                                    <option value="វិទ្យាល័យ សម្តេចឪ">វិទ្យាល័យ សម្តេចឪ</option>
+                                    <option value="វិទ្យាល័យ ហ៊ុន សែន ខ្លាកូន">វិទ្យាល័យ ហ៊ុន សែន ខ្លាកូន</option>
+                                    <option value="វិទ្យាល័យ អូរអំបិល">វិទ្យាល័យ អូរអំបិល</option>
+                                </optgroup>
+                                <optgroup label="២. ក្រុងប៉ោយប៉ែត">
+                                    <option value="វិទ្យាល័យ ប៉ោយប៉ែតក្រុង">វិទ្យាល័យ ប៉ោយប៉ែតក្រុង</option>
+                                    <option value="វិទ្យាល័យ និមិត្ត">វិទ្យាល័យ និមិត្ត</option>
+                                    <option value="វិទ្យាល័យ អូរជ្រៅ">វិទ្យាល័យ អូរជ្រៅ</option>
+                                    <option value="វិទ្យាល័យ ទួលប្រាសាទ">វិទ្យាល័យ ទួលប្រាសាទ</option>
+                                </optgroup>
+                                <optgroup label="៣. ស្រុកមង្គលបូរី">
+                                    <option value="វិទ្យាល័យ មង្គលបូរី">វិទ្យាល័យ មង្គលបូរី</option>
+                                    <option value="វិទ្យាល័យ ហ៊ុន សែន មង្គលបូរី">វិទ្យាល័យ ហ៊ុន សែន មង្គលបូរី</option>
+                                    <option value="វិទ្យាល័យ ភ្នំធំ">វិទ្យាល័យ ភ្នំធំ</option>
+                                    <option value="វិទ្យាល័យ រោងគោ">វិទ្យាល័យ រោងគោ</option>
+                                    <option value="វិទ្យាល័យ ហ៊ុន សែន សំបួរ">វិទ្យាល័យ ហ៊ុន សែន សំបួរ</option>
+                                </optgroup>
+                                <optgroup label="៤. ស្រុកព្រះនេត្រព្រះ">
+                                    <option value="វិទ្យាល័យ ជប់វារី">វិទ្យាល័យ ជប់វារី</option>
+                                    <option value="វិទ្យាល័យ ហ៊ុន សែន ឈ្នួរមានជ័យ">វិទ្យាល័យ ហ៊ុន សែន ឈ្នួរមានជ័យ</option>
+                                    <option value="វិទ្យាល័យ រហាល">វិទ្យាល័យ រហាល</option>
+                                    <option value="វិទ្យាល័យ ទឹកជោរ">វិទ្យាល័យ ទឹកជោរ</option>
+                                    <option value="វិទ្យាល័យ បុស្បូវ">វិទ្យាល័យ បុស្បូវ</option>
+                                </optgroup>
+                                <optgroup label="៥. ស្រុកភ្នំស្រុក">
+                                    <option value="វិទ្យាល័យ ភ្នំស្រុក">វិទ្យាល័យ ភ្នំស្រុក</option>
+                                    <option value="វិទ្យាល័យ សុខ អាន ប៉ោយចារ">វិទ្យាល័យ សុខ អាន ប៉ោយចារ</option>
+                                    <option value="វិទ្យាល័យ ខ្មែររៈ ណាំតៅ">វិទ្យាល័យ ខ្មែររៈ ណាំតៅ</option>
+                                </optgroup>
+                                <optgroup label="៦. ស្រុកថ្មពួក">
+                                    <option value="វិទ្យាល័យ ហ៊ុន សែន ថ្មពួក">វិទ្យាល័យ ហ៊ុន សែន ថ្មពួក</option>
+                                    <option value="វិទ្យាល័យ បន្ទាយឆ្មារ">វិទ្យាល័យ បន្ទាយឆ្មារ</option>
+                                </optgroup>
+                                <optgroup label="៧. ស្រុកអូរជ្រៅ">
+                                    <option value="វិទ្យាល័យ កូប">វិទ្យាល័យ កូប</option>
+                                    <option value="វិទ្យាល័យ យាងដង្គុំ">វិទ្យាល័យ យាងដង្គុំ</option>
+                                </optgroup>
+                                <optgroup label="៨. ស្រុកស្វាយចេក">
+                                    <option value="វិទ្យាល័យ ស្វាយចេក">វិទ្យាល័យ ស្វាយចេក</option>
+                                </optgroup>
+                                <optgroup label="៩. ស្រុកម៉ាឡៃ">
+                                    <option value="វិទ្យាល័យ ហ៊ុន សែន ម៉ាឡៃ">វិទ្យាល័យ ហ៊ុន សែន ម៉ាឡៃ</option>
+                                </optgroup>
+                            </select>

@@ -1,0 +1,17 @@
+<script>
+        function searchFunction() {
+            let input = document.getElementById("searchInput").value.toUpperCase();
+            let tr = document.getElementById("studentTable").getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                let text = tr[i].innerText.toUpperCase();
+                tr[i].style.display = text.includes(input) ? "" : "none";
+            }
+        }
+        function exportToExcel() {
+            let table = document.getElementById("studentTable");
+            let wb = XLSX.utils.table_to_book(table, {sheet: "របាយការណ៍វត្តមាន"});
+            XLSX.writeFile(wb, "Student_Attendance_Report.xlsx");
+        }
+    </script>
+</body>
+</html>

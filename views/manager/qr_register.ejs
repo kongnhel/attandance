@@ -1,0 +1,96 @@
+<%- include('../partials/header') %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<main class="min-h-[90vh] flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-600 to-indigo-800 text-white">
+
+    <div class="mb-8 flex gap-4 no-print">
+        <a href="/manager/qr-att" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/30 transition-all font-bold text-sm text-white">
+            ➡️ ប្តូរទៅ QR 2 (វត្តមាន)
+        </a>
+    </div>
+
+    <div id="qr-card-to-save" class="bg-white p-12 rounded-[3.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] text-center max-w-sm w-full animate-pop border-4 border-blue-50">
+        <div class="mb-6 flex flex-col items-center">
+            <div class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-2">
+                STUDENT SYSTEM
+            </div>
+            <h1 class="text-3xl font-bold text-slate-800 leading-tight">
+                ចុះឈ្មោះចូលរួម <br><span class="text-blue-600">តាមរយៈ QR Code</span>
+            </h1>
+            <p class="text-blue-400 text-[10px] mt-2 font-bold tracking-widest uppercase opacity-70 text-center">
+                Event Registration QR-01
+            </p>
+        </div>
+
+        <div id="qrcode" class="mb-8 flex justify-center p-4 bg-white rounded-3xl border-2 border-blue-50 shadow-inner"></div>
+
+        <div class="space-y-2 mb-8 text-center">
+            <p class="text-slate-600 text-sm font-bold italic underline decoration-blue-200 decoration-2 underline-offset-4">
+                សូមស្កែនដើម្បីបំពេញព័ត៌មាន
+            </p>
+            <p class="text-slate-400 text-[10px] uppercase font-medium tracking-wide">
+                Please scan to register your profile
+            </p>
+        </div>
+
+        <div class="border-t border-gray-100 pt-6">
+            <p class="text-[9px] text-gray-400 font-medium">
+                ប្រើកាមេរ៉ាទូរស័ព្ទ ឬកម្មវិធីស្កែន QR ដើម្បីបន្ត
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-8 w-full max-w-sm no-print">
+        <button id="downloadBtn" onclick="downloadQRCard()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-emerald-200/50 transition-all active:scale-95 flex items-center justify-center gap-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            ទាញយករូបភាព (Save Full Card)
+        </button>
+    </div>
+</main>
+
+<script>
+    // ១. បង្កើត QR Code
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: "<%= link %>",
+        width: 280,
+        height: 280,
+        colorDark: "#1e3a8a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H,
+    });
+
+    // ២. Function សម្រាប់ថតរូប Card ទាំងមូល
+    async function downloadQRCard() {
+        const card = document.getElementById("qr-card-to-save");
+        const btn = document.getElementById("downloadBtn");
+        
+        btn.innerHTML = "កំពុងរៀបចំរូបភាព...";
+        btn.disabled = true;
+
+        html2canvas(card, {
+            scale: 3, 
+            backgroundColor: "#ffffff", 
+            borderRadius: 40,
+            useCORS: true,
+        }).then((canvas) => {
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement("a");
+            link.download = "QR1_Registration_Card.png";
+            link.href = image;
+            link.click();
+            
+            btn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> ទាញយករូបភាព (Save Full Card)`;
+            btn.disabled = false;
+        });
+    }
+</script>
+
+<style>
+    .animate-pop { animation: pop 0.6s cubic-bezier(0.26, 0.53, 0.74, 1.48) forwards; }
+    @keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @media print { .no-print { display: none; } }
+</style>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជាក់វត្តមានចូលរួម - Attendance System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Kantumruy Pro', sans-serif; background-color: #f1f5f9; }
+        .input-focus:focus { border-color: #4f46e5; ring: 4px; ring-color: rgba(79, 70, 229, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+    <div class="max-w-md w-full bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden animate-pop">
+        
+        <div class="bg-gradient-to-br from-indigo-600 to-purple-800 p-10 text-center">
+            <div class="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-md border border-white/30">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-1">បញ្ជាក់វត្តមាន</h2>
+            <p class="text-indigo-100 text-xs font-light">សូមបញ្ចូលលេខទូរស័ព្ទដែលបងបានចុះឈ្មោះ</p>
+        </div>
+
+        <form action="/api/check-in" method="POST" class="p-8 space-y-6">
+            
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-gray-700 ml-1">លេខទូរស័ព្ទ <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                    </span>
+                    <input type="tel" name="phone" placeholder="ឧ. 012345678" required 
+                        class="w-full pl-11 pr-4 py-4 border border-gray-200 rounded-2xl bg-gray-50 outline-none transition-all duration-300 input-focus focus:bg-white text-lg font-semibold tracking-wider">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] text-lg">
+                    កត់វត្តមានឥឡូវនេះ (CHECK-IN)
+                </button>
+            </div>
+
+            <div class="text-center">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-medium italic">Attendance Verification System v2.0</p>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .animate-pop { animation: pop 0.5s cubic-bezier(0.26, 0.53, 0.74, 1.48) forwards; }
+        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</body>
+</html>
