@@ -5,22 +5,25 @@
 
 <main class="min-h-[90vh] flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-600 to-indigo-800 text-white">
 
-    <div class="mb-8 flex gap-4 no-print">
-        <a href="/manager/qr-att" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/30 transition-all font-bold text-sm text-white">
+    <!-- <div class="mb-8 flex gap-4 no-print">
+        <a href="/manager/qr-att" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-6 py-2 rounded-full border border-white/30 transition-all font-bold text-sm text-white flex items-center gap-2">
             ➡️ ប្តូរទៅ QR 2 (វត្តមាន)
         </a>
-    </div>
+    </div> -->
 
-    <div id="qr-card-to-save" class="bg-white p-12 rounded-[3.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] text-center max-w-sm w-full animate-pop border-4 border-blue-50">
+    <div id="qr-card-to-save" class="bg-white p-12 rounded-[3.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] text-center max-w-sm w-full animate-pop border-4 border-blue-50 relative overflow-hidden">
+        
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+
         <div class="mb-6 flex flex-col items-center">
             <div class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-2">
-                STUDENT SYSTEM
+                STUDENT REGISTRATION
             </div>
             <h1 class="text-3xl font-bold text-slate-800 leading-tight">
                 ចុះឈ្មោះចូលរួម <br><span class="text-blue-600">តាមរយៈ QR Code</span>
             </h1>
             <p class="text-blue-400 text-[10px] mt-2 font-bold tracking-widest uppercase opacity-70 text-center">
-                Event Registration QR-01
+                Scan to Register
             </p>
         </div>
 
@@ -31,13 +34,13 @@
                 សូមស្កែនដើម្បីបំពេញព័ត៌មាន
             </p>
             <p class="text-slate-400 text-[10px] uppercase font-medium tracking-wide">
-                Please scan to register your profile
+                Join our Telegram Group instantly!
             </p>
         </div>
 
         <div class="border-t border-gray-100 pt-6">
             <p class="text-[9px] text-gray-400 font-medium">
-                ប្រើកាមេរ៉ាទូរស័ព្ទ ឬកម្មវិធីស្កែន QR ដើម្បីបន្ត
+                ប្រើកាមេរ៉ាទូរស័ព្ទ ឬ Telegram ដើម្បីស្កែន
             </p>
         </div>
     </div>
@@ -51,45 +54,71 @@
 </main>
 
 <script>
-    // ១. បង្កើត QR Code
+    // ១. បង្កើត QR Code ដោយស្វ័យប្រវត្តិ
+    // Link នេះបានមកពី Controller ដែលយើងបានកំណត់មុននេះ
+    var qrData = "<%= link %>"; 
+    
     var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: "<%= link %>",
-        width: 280,
-        height: 280,
-        colorDark: "#1e3a8a",
+        text: qrData,
+        width: 250,
+        height: 250,
+        colorDark: "#1e3a8a", // ពណ៌ទឹកប៊ិចចាស់ (Indigo-900)
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H,
     });
 
-    // ២. Function សម្រាប់ថតរូប Card ទាំងមូល
-    async function downloadQRCard() {
+    // ២. Function សម្រាប់ថតរូប Card ទាំងមូល (HTML -> Image)
+    function downloadQRCard() {
         const card = document.getElementById("qr-card-to-save");
         const btn = document.getElementById("downloadBtn");
         
-        btn.innerHTML = "កំពុងរៀបចំរូបភាព...";
+        // ប្តូរអក្សរប៊ូតុង
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> កំពុងបង្កើតរូបភាព...`;
         btn.disabled = true;
 
         html2canvas(card, {
-            scale: 3, 
+            scale: 3, // គុណភាពច្បាស់ល្អ (High Resolution)
             backgroundColor: "#ffffff", 
-            borderRadius: 40,
+            borderRadius: 50,
+            logging: false,
             useCORS: true,
         }).then((canvas) => {
+            // បង្កើត Link ដោនឡូត
             const image = canvas.toDataURL("image/png");
             const link = document.createElement("a");
-            link.download = "QR1_Registration_Card.png";
+            link.download = "Registration-QR-Card.png";
             link.href = image;
             link.click();
             
-            btn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> ទាញយករូបភាព (Save Full Card)`;
-            btn.disabled = false;
+            // ត្រឡប់ប៊ូតុងមកសភាពដើម
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                // បង្ហាញ Popup ជោគជ័យ
+                Swal.fire({
+                    icon: 'success',
+                    title: 'រក្សាទុកជោគជ័យ!',
+                    text: 'រូបភាពត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ/កុំព្យូទ័ររបស់អ្នក',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    customClass: { popup: 'rounded-[2rem]' }
+                });
+            }, 800);
         });
     }
 </script>
 
 <style>
+    /* ធ្វើឱ្យ Card លោតមកបែប Pop-up */
     .animate-pop { animation: pop 0.6s cubic-bezier(0.26, 0.53, 0.74, 1.48) forwards; }
-    @keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes pop { 
+        0% { transform: scale(0.8); opacity: 0; } 
+        100% { transform: scale(1); opacity: 1; } 
+    }
+    
+    /* ពេល Print មិនឱ្យឃើញប៊ូតុង */
     @media print { .no-print { display: none; } }
 </style>
 

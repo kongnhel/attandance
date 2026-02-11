@@ -157,12 +157,62 @@ exports.registerParticipant = async (req, res) => {
     }
 };
 
+// exports.getStudentProfile = async (req, res) => {
+//     try {
+//         const student = await Participant.findById(req.params.id);
+//         if (!student) return res.redirect("/register");
+//        res.render("student/studentProfile", { student, title: "ប្រវត្តិរូបប្អូន" });
+//     } catch (err) {
+//         res.redirect("/register");
+//     }
+// };
+
+// exports.getStudentProfile = async (req, res) => {
+//     try {
+//         // ១. រកព័ត៌មានសិស្សដូចមុន
+//         const student = await Participant.findById(req.params.id);
+//         if (!student) return res.redirect("/register");
+
+//         // ២. 🔥 [NEW] រកប្រវត្តិវត្តមានរបស់គាត់ ហើយ "Populate" យកព័ត៌មានកម្មវិធីមក
+//         const history = await Attendance.find({ studentId: student._id })
+//                                       .populate('programId') // <--- កន្លែងវេទមន្ត! វាទៅយកព័ត៌មាន Program មកដាក់ជំនួស ID
+//                                       .sort({ scannedAt: -1 }); // រៀបយកអាថ្មីបំផុតមកដាក់លើគេ
+
+//         // ៣. បោះទិន្នន័យ history ទៅឱ្យ View
+//         res.render("student/studentProfile", { 
+//             student, 
+//             history, // <--- បោះទៅឱ្យ EJS
+//             title: "កាតវត្តមាន - " + student.name_en,
+//             studentId: student._id,
+//             isAdmin: false
+//         });
+
+//     } catch (err) {
+//         console.error(err);
+//         res.redirect("/register");
+//     }
+//   }
+
 exports.getStudentProfile = async (req, res) => {
     try {
         const student = await Participant.findById(req.params.id);
         if (!student) return res.redirect("/register");
-       res.render("student/studentProfile", { student, title: "ប្រវត្តិរូបប្អូន" });
+
+        // 🔥 កែត្រង់នេះ៖ ប្រើ "participantId" មិនមែន "studentId" ទេ!
+        const history = await Attendance.find({ participantId: student._id }) 
+                                      .populate('programId')
+                                      .sort({ createdAt: -1 }); // យកអាថ្មីបំផុតមកលើ
+
+        res.render("student/studentProfile", { 
+            student,
+            history, // បោះទិន្នន័យទៅឱ្យ View
+            title: "Digital Pass - " + student.name_en,
+            studentId: student._id,
+            isAdmin: false
+        });
+
     } catch (err) {
+        console.error("Error:", err);
         res.redirect("/register");
     }
 };
