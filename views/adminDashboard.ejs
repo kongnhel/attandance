@@ -53,24 +53,25 @@
                 <% students.forEach((s, index) => { %>
                     <tr>
                         <td><%= index + 1 %></td>
-                        <td><%= s.name_kh %></td>
-                        <td><%= s.name_en %></td>
-                        <td><%= s.gender %></td>
-                        <td><%= s.phone %></td>
-                        <td><%= s.high_school %></td>
-                        <td><%= s.province %></td>
+                        <td><%= s.name_kh || "" %></td>
+                        <td><%= s.name_en || "" %></td>
+                        <td><%= s.gender || "" %></td>
+                        <td><%= s.phone || "" %></td>
+                        <td><%= s.high_school || "" %></td>
+                        <td><%= s.province || "" %></td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
     </div>
+
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
         <div>
             <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight mb-1">
                 <span class="text-indigo-600">Student</span> Data Center
             </h1>
             <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">
-                ទិន្នន័យសិស្ស និងស្ថិតិវិទ្យាល័យ 
+                ទិន្នន័យសិស្ស និងស្ថិតិវិទ្យាល័យ
             </p>
         </div>
         
@@ -157,11 +158,11 @@
                                         <td class="px-8 py-4">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-9 h-9 rounded-2xl bg-slate-100 flex items-center justify-center text-xs font-black text-slate-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                                                    <%= student.name_en.charAt(0).toUpperCase() %>
+                                                    <%= (student.name_en && student.name_en.length > 0) ? student.name_en.charAt(0).toUpperCase() : '?' %>
                                                 </div>
                                                 <div>
                                                     <div class="font-bold text-slate-700 text-sm search-text"><%= student.name_kh %></div>
-                                                    <div class="text-[10px] text-slate-400 font-bold uppercase search-text"><%= student.name_en %></div>
+                                                    <div class="text-[10px] text-slate-400 font-bold uppercase search-text"><%= student.name_en || "" %></div>
                                                 </div>
                                             </div>
                                         </td>
@@ -249,9 +250,9 @@
     }
 
     // --- 📥 Export Excel (Old Logic) ---
-    // 🔥 ដោយសារយើងមានតារាងសម្ងាត់ id="studentTable" ខាងលើ នោះកូដនេះនឹងដើរវិញ ១០០%
+    // ប្រើតារាងសម្ងាត់ id="studentTable" ខាងលើ ធានាថាដើរ ១០០%
     function exportToExcel() {
-        let table = document.getElementById("studentTable"); // ចាប់យកតារាងសម្ងាត់
+        let table = document.getElementById("studentTable"); 
         let wb = XLSX.utils.table_to_book(table, { sheet: "Students" });
         XLSX.writeFile(wb, "Student_Data_List.xlsx");
     }
