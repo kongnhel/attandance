@@ -1,0 +1,59 @@
+<%- include('../partials/header') %>
+
+<main class="max-w-7xl mx-auto p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+            <h2 class="text-xl font-black text-slate-800 mb-6">បង្កើតកម្មវិធីថ្មី</h2>
+            <form action="/admin/programs/create" method="POST" class="space-y-4">
+                <input type="text" name="name" placeholder="ឈ្មោះកម្មវិធី" required class="w-full px-5 py-3 border rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-indigo-400">
+                <input type="date" name="date" required class="w-full px-5 py-3 border rounded-2xl bg-slate-50 outline-none">
+                <select name="session" class="w-full px-5 py-3 border rounded-2xl bg-slate-50">
+                    <option value="Morning">Morning</option>
+                    <option value="Evening">Evening</option>
+                </select>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="time" name="startTime" class="px-5 py-3 border rounded-2xl bg-slate-50">
+                    <input type="time" name="endTime" class="px-5 py-3 border rounded-2xl bg-slate-50">
+                </div>
+                <textarea name="description" placeholder="ព័ត៌មានលម្អិត..." class="w-full px-5 py-3 border rounded-2xl bg-slate-50 h-24 resize-none"></textarea>
+                <button type="submit" class="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-lg hover:bg-indigo-700 transition-all">រក្សាទុកកម្មវិធី</button>
+            </form>
+        </div>
+
+        <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+            <h2 class="text-xl font-black text-slate-800 mb-6">បញ្ជីកម្មវិធី</h2>
+            <div class="space-y-4">
+                <% programs.forEach(program => { %>
+                    <div class="flex items-center justify-between p-6 border rounded-3xl hover:bg-slate-50 transition-all group">
+                        <div>
+                            <h3 class="font-bold text-slate-800"><%= program.name %></h3>
+                            <p class="text-xs text-slate-400"><%= program.date.toDateString() %> | <%= program.session %></p>
+                        </div>
+                        <button onclick="openScanner('<%= program._id %>', '<%= program.name %>')" class="px-6 py-2 bg-emerald-500 text-white text-xs font-black rounded-xl shadow-md hover:bg-emerald-600 transition-all">
+                            SCAN ATTENDANCE
+                        </button>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // មុខងារបើកកាមេរ៉ាស្កែន (បងអាចប្រើ Library Html5-QRCode)
+    function openScanner(programId, programName) {
+        Swal.fire({
+            title: 'កំពុងស្កែនវត្តមានសម្រាប់៖',
+            text: programName,
+            html: '<div id="reader" style="width: 100%"></div>',
+            showConfirmButton: false,
+            showCloseButton: true,
+            didOpen: () => {
+                // កូដសម្រាប់ Start កាមេរ៉ានៅទីនេះ
+                console.log("Scanner Started for Program:", programId);
+            }
+        });
+    }
+</script>
+
+<%- include('../partials/footer') %>

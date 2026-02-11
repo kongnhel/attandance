@@ -7,6 +7,7 @@ const attendanceSchema = new mongoose.Schema({
     required: true ,
     index: true // បន្ថែមអាហ្នឹងមួយទៀតបង ឱ្យវាដើរលឿនដូចហោះ!
   },
+  programId: { type: mongoose.Schema.Types.ObjectId, ref: 'Program', required: true },
   checkInTime: { type: Date, default: Date.now }
 }, { timestamps: true });
 
