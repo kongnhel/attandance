@@ -70,7 +70,7 @@
                 <span class="text-indigo-600">Student</span> Data Center
             </h1>
             <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">
-                ទិន្នន័យសិស្ស និងស្ថិតិវិទ្យាល័យ (V5.6 Hidden Table)
+                ទិន្នន័យសិស្ស និងស្ថិតិវិទ្យាល័យ 
             </p>
         </div>
         
@@ -191,7 +191,7 @@
             <% }) %>
         <% } else { %>
             <div class="text-center py-20 bg-white rounded-[2.5rem] border-2 border-dashed border-slate-200">
-                <p class="text-slate-400 font-bold">មិនទាន់មានទិន្នន័យសិស្សទេបង!</p>
+                <p class="text-slate-400 font-bold">មិនទាន់មានទិន្នន័យសិស្សទេអ្នក!</p>
             </div>
         <% } %>
     </div>
@@ -203,7 +203,7 @@
     async function confirmDelete(studentId, studentName) {
         const result = await Swal.fire({
             title: 'លុបសិស្ស?',
-            text: `តើបងចង់លុប "${studentName}" ចេញមែនទេ?`,
+            text: `តើអ្នកចង់លុប "${studentName}" ចេញមែនទេ?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#f43f5e',
