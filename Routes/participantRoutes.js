@@ -28,7 +28,7 @@ router.get("/admin/dashboard", adminAuth, ctrl.getAdminDashboard);
 // លុបទិន្នន័យសិស្ស (Hard Delete)
 router.delete("/admin/delete-student/:id", adminAuth, ctrl.deleteStudent);
 // ចុះវត្តមានដោយដៃពី Dashboard
-router.post("/admin/check-in/:id", adminAuth, ctrl.markAttendance);
+// router.post("/admin/check-in/:id", adminAuth, ctrl.markAttendance);
 
 // ==========================================
 // 🛠️ ផ្នែក MANAGER (QR Code Pages)
@@ -49,6 +49,6 @@ router.put("/student/profile/update/:id", ctrl.updateStudentProfile);
 
 // ៣. ការស្កែនវត្តមាន (Attendance API)
 // ផ្លូវនេះប្រើសម្រាប់ទទួលទិន្នន័យពី Scanner នៅពេល Manager ស្កែន QR សិស្ស
-router.post("/api/check-in", ctrl.processCheckIn);
+// router.post("/api/check-in", ctrl.processCheckIn);
 
 module.exports = router;

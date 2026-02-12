@@ -29,7 +29,7 @@
                 <span class="bg-slate-100 text-slate-500 px-2 py-1 rounded-lg font-black uppercase text-[9px] tracking-tighter">
                     <%= locals.isAdmin ? 'Admin' : (locals.studentId ? 'Student' : 'Guest') %>
                 </span>
-                <button id="mobile-menu-btn" class="text-slate-500 hover:text-indigo-600 focus:outline-none">
+                <button id="mobile-menu-btn" class="text-slate-500 hover:text-indigo-600 focus:outline-none p-1 rounded-lg hover:bg-slate-100 transition-colors">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
@@ -40,6 +40,11 @@
                     <a href="/manager/qr-reg" class="text-xs font-bold text-slate-500 hover:text-indigo-600 uppercase tracking-widest transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v-3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
                         QR Register
+                    </a>
+
+                    <a href="/admin/schools" class="text-xs font-bold text-slate-500 hover:text-indigo-600 uppercase tracking-widest transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        Manage Schools
                     </a>
                     
                     <a href="/admin/dashboard" class="flex items-center gap-2 text-xs font-black text-indigo-600 bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-100 hover:bg-indigo-100 transition-all">
@@ -53,8 +58,7 @@
                     </a>
 
                 <% } else { %>
-                    <% if (locals.studentId) { %>
-                        <% } else { %>
+                    <% if (!locals.studentId) { %>
                         <a href="/register" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-indigo-600 uppercase tracking-widest transition-all group">
                             <div class="p-1.5 bg-slate-50 rounded-lg group-hover:bg-indigo-50 transition-colors">
                                 <svg class="w-4 h-4 text-slate-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
@@ -77,19 +81,26 @@
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-xl py-4 px-6 flex flex-col space-y-4">
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-xl py-4 px-6 flex flex-col space-y-4 z-50">
+            
             <% if (locals.isAdmin) { %>
                 <a href="/manager/qr-reg" class="block text-sm font-bold text-slate-600 hover:text-indigo-600 py-2 border-b border-slate-50">QR Register</a>
-                <a href="/admin/dashboard" class="block text-sm font-bold text-indigo-600 bg-indigo-50 px-4 py-3 rounded-xl text-center">DASHBOARD</a>
+                
+                <a href="/admin/schools" class="block text-sm font-bold text-slate-600 hover:text-indigo-600 py-2 border-b border-slate-50">Manage Schools</a>
+                
+                <a href="/admin/dashboard" class="block text-sm font-bold text-indigo-600 bg-indigo-50 px-4 py-3 rounded-xl text-center shadow-sm">DASHBOARD</a>
+                
                 <a href="/admin/logout" class="block text-sm font-bold text-rose-500 py-2 text-center">LOGOUT</a>
+
             <% } else { %>
                 <% if (locals.studentId) { %>
-                    <p class="text-center text-xs text-slate-400 font-bold italic">Welcome Student!</p>
+                    <p class="text-center text-xs text-slate-400 font-bold italic py-2">Welcome Student!</p>
                 <% } else { %>
                     <a href="/register" class="block text-sm font-bold text-slate-600 hover:text-indigo-600 py-2 border-b border-slate-50">ចុះឈ្មោះថ្មី</a>
                     <a href="/admin/login" class="block text-sm font-bold text-slate-600 hover:text-indigo-600 py-2">ADMIN LOGIN</a>
                 <% } %>
             <% } %>
+
         </div>
     </nav>
 
@@ -101,3 +112,5 @@
             menu.classList.toggle('hidden');
         });
     </script>
+</body>
+</html>

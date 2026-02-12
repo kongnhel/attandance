@@ -6,6 +6,7 @@ const session = require("express-session");
 require("dotenv").config();
 
 const participantRoutes = require("./Routes/participantRoutes");
+const adminRoutes = require('./Routes/adminRoutes');
 
 const app = express();
 
@@ -80,6 +81,8 @@ app.use("/", participantRoutes);
 app.get("/", (req, res) => {
   res.redirect("/manager/qr-reg");
 });
+
+app.use('/admin', adminRoutes);
 
 // ការពារផ្លូវដែលរកមិនឃើញ (404)
 app.use((req, res) => {

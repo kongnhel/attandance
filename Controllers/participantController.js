@@ -1,6 +1,7 @@
 const Participant = require("../models/Participant");
 const Attendance = require("../models/Attendance");
 const Program = require("../models/Program"); // 👈 ត្រូវប្រាកដថាបងមាន Model នេះ
+const School = require("../models/School"); // ហៅ Model មក
 
 // ==========================================
 // 🛡️ ផ្នែក ADMIN AUTHENTICATION (Session)
@@ -8,33 +9,33 @@ const Program = require("../models/Program"); // 👈 ត្រូវប្រ�
 
 // ១. បង្ហាញទំព័រ Login
 exports.getLoginPage = (req, res) => {
-    res.render("login", { title: "Admin Login" });
+  res.render("login", { title: "Admin Login" });
 };
 
 // ២. Logic ត្រួតពិនិត្យ Password និងបង្កើត Session
 exports.loginAdmin = (req, res) => {
-    const { password } = req.body;
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+  const { password } = req.body;
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
-    if (password === ADMIN_PASSWORD) {
-        req.session.isAdmin = true; // ✅ បង្កើតសំបុត្រអនុញ្ញាតក្នុង Session
-        return res.redirect("/admin/dashboard");
-    } else {
-        return res.render("result", {
-            title: "Error",
-            message: "Password ខុសបងអើយ! 😂",
-            color: "red",
-        });
-    }
+  if (password === ADMIN_PASSWORD) {
+    req.session.isAdmin = true; // ✅ បង្កើតសំបុត្រអនុញ្ញាតក្នុង Session
+    return res.redirect("/admin/dashboard");
+  } else {
+    return res.render("result", {
+      title: "Error",
+      message: "Password ខុសបងអើយ! 😂",
+      color: "red",
+    });
+  }
 };
 
 // ៣. បំផ្លាញ Session និងចាកចេញពីប្រព័ន្ធ
 exports.logoutAdmin = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) return res.redirect("/admin/dashboard");
-        res.clearCookie("connect.sid"); // លុប Cookie ឱ្យស្អាត
-        res.redirect("/admin/login");
-    });
+  req.session.destroy((err) => {
+    if (err) return res.redirect("/admin/dashboard");
+    res.clearCookie("connect.sid"); // លុប Cookie ឱ្យស្អាត
+    res.redirect("/manager/qr-reg");
+  });
 };
 
 // ==========================================
@@ -43,23 +44,23 @@ exports.logoutAdmin = (req, res) => {
 
 // ៤. បង្ហាញទំព័រគ្រប់គ្រងកម្មវិធី
 exports.getProgramsPage = async (req, res) => {
-    try {
-        const programs = await Program.find().sort({ date: -1 });
-        res.render("admin/programs", { programs, title: "គ្រប់គ្រងកម្មវិធី" });
-    } catch (err) {
-        res.status(500).send("មិនអាចបើកទំព័រកម្មវិធីបានទេ!");
-    }
+  try {
+    const programs = await Program.find().sort({ date: -1 });
+    res.render("admin/programs", { programs, title: "គ្រប់គ្រងកម្មវិធី" });
+  } catch (err) {
+    res.status(500).send("មិនអាចបើកទំព័រកម្មវិធីបានទេ!");
+  }
 };
 
 // ៥. បង្កើតកម្មវិធីថ្មី
 exports.createProgram = async (req, res) => {
-    try {
-        const newProgram = new Program(req.body);
-        await newProgram.save();
-        res.redirect("/admin/programs");
-    } catch (err) {
-        res.status(400).send("បំពេញព័ត៌មានកម្មវិធីអត់ត្រូវទេបង!");
-    }
+  try {
+    const newProgram = new Program(req.body);
+    await newProgram.save();
+    res.redirect("/admin/programs");
+  } catch (err) {
+    res.status(400).send("បំពេញព័ត៌មានកម្មវិធីអត់ត្រូវទេបង!");
+  }
 };
 
 // ==========================================
@@ -68,93 +69,143 @@ exports.createProgram = async (req, res) => {
 
 // ៦. បង្ហាញ Dashboard
 exports.getAdminDashboard = async (req, res) => {
-    try {
-        const students = await Participant.find().sort({ createdAt: -1 });
-        const attendanceRecords = await Attendance.find();
-        const checkedInIds = attendanceRecords.map((r) => r.participantId.toString());
+  try {
+    const students = await Participant.find().sort({ createdAt: -1 });
+    const attendanceRecords = await Attendance.find();
+    const checkedInIds = attendanceRecords.map((r) =>
+      r.participantId.toString(),
+    );
 
-        res.render("adminDashboard", { students, checkedInIds, title: "Admin Dashboard" });
-    } catch (err) {
-        res.status(500).send("មិនអាចបើក Dashboard បានទេបង!");
-    }
+    res.render("adminDashboard", {
+      students,
+      checkedInIds,
+      title: "Admin Dashboard",
+    });
+  } catch (err) {
+    res.status(500).send("មិនអាចបើក Dashboard បានទេបង!");
+  }
 };
 
 // ៧. ចុះវត្តមានដោយដៃពី Dashboard
 exports.markAttendance = async (req, res) => {
-    try {
-        const participantId = req.params.id;
-        // ចំណាំ៖ ក្នុង V8 បងគួរជ្រើសរើស ProgramId ផង តែនេះជា Fallback
-        const newRecord = new Attendance({ participantId });
-        await newRecord.save();
-        res.redirect("/admin/dashboard");
-    } catch (err) {
-        res.status(500).send("បញ្ហាក្នុងការកត់វត្តមានបង!");
-    }
+  try {
+    const participantId = req.params.id;
+    // ចំណាំ៖ ក្នុង V8 បងគួរជ្រើសរើស ProgramId ផង តែនេះជា Fallback
+    const newRecord = new Attendance({ participantId });
+    await newRecord.save();
+    res.redirect("/admin/dashboard");
+  } catch (err) {
+    res.status(500).send("បញ្ហាក្នុងការកត់វត្តមានបង!");
+  }
 };
 
 // ៨. លុបទិន្នន័យសិស្ស (Evolution V4.1)
 exports.deleteStudent = async (req, res) => {
-    try {
-        const studentId = req.params.id;
-        const deletedStudent = await Participant.findByIdAndDelete(studentId);
+  try {
+    const studentId = req.params.id;
+    const deletedStudent = await Participant.findByIdAndDelete(studentId);
 
-        if (!deletedStudent) {
-            return res.status(404).json({ success: false, message: "រកមិនឃើញសិស្សទេ!" });
-        }
-        await Attendance.deleteMany({ participantId: studentId });
-        res.json({ success: true, message: "ទិន្នន័យត្រូវបានលុបស្អាតហើយបង!" });
-    } catch (err) {
-        res.status(500).json({ success: false, message: "Server Error" });
+    if (!deletedStudent) {
+      return res
+        .status(404)
+        .json({ success: false, message: "រកមិនឃើញសិស្សទេ!" });
     }
+    await Attendance.deleteMany({ participantId: studentId });
+    res.json({ success: true, message: "ទិន្នន័យត្រូវបានលុបស្អាតហើយបង!" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
 };
 
 // ==========================================
 // 🛠️ ផ្នែក MANAGER (QR Code Pages)
 // ==========================================
 
+
 exports.showRegisterQR = (req, res) => {
-    const link = `${req.protocol}://${req.get("host")}/register`;
-    res.render("manager/qr_register", { link, title: "QR Register" });
+  const link = `${req.protocol}://${req.get("host")}/register`;
+  res.render("manager/qr_register", { link, title: "QR Register" });
 };
 
 exports.showAttendanceQR = async (req, res) => {
-    try {
-        const link = `${req.protocol}://${req.get("host")}/api/check-in`;
-        const students = await Participant.find();
-        const attendanceRecords = await Attendance.find();
-        const checkedInIds = attendanceRecords.map((r) => r.participantId.toString());
+  try {
+    const link = `${req.protocol}://${req.get("host")}/api/check-in`;
+    const students = await Participant.find();
+    const attendanceRecords = await Attendance.find();
+    const checkedInIds = attendanceRecords.map((r) =>
+      r.participantId.toString(),
+    );
 
-        res.render("manager/qr_attendance", { link, students, checkedInIds, title: "QR Attend" });
-    } catch (err) {
-        res.status(500).send("កំហុសទំព័រ QR បងអើយ!");
-    }
+    res.render("manager/qr_attendance", {
+      link,
+      students,
+      checkedInIds,
+      title: "QR Attend",
+    });
+  } catch (err) {
+    res.status(500).send("កំហុសទំព័រ QR បងអើយ!");
+  }
 };
 
 // ==========================================
 // 🎓 ផ្នែកសិស្ស (Registration & Profile)
 // ==========================================
 
-exports.getRegisterPage = (req, res) => res.render("student/register", { title: "ចុះឈ្មោះសិស្ស" });
+exports.getRegisterPage = async (req, res) => {
+  try {
+    // ទាញយកសាលាទាំងអស់ពី DB
+    const schools = await School.find().sort({ province: 1, name: 1 });
+
+    // បង្កើត Object សម្រាប់ Map Link Telegram (ដើម្បីប្រើក្នុង Script Frontend)
+    const schoolLinkMap = {};
+    schools.forEach((s) => {
+      schoolLinkMap[s.name] = s.telegramLink;
+    });
+
+    res.render("student/register", {
+      schools, // សម្រាប់ធ្វើ Loop ក្នុង Dropdown
+      schoolLinkMap, // សម្រាប់ដាក់ក្នុង Script JS
+    });
+  } catch (err) {
+    console.error(err);
+    res.send("Error Loading Page");
+  }
+};
 
 exports.registerParticipant = async (req, res) => {
-    try {
-        const newUser = new Participant(req.body);
-        const savedUser = await newUser.save();
-        
-        // រក្សាទុកក្នុង Session ដើម្បីឱ្យ Header បង្ហាញប៊ូតុង "MY PASS"
-        req.session.studentId = savedUser._id; 
+  try {
+    // 2. ស្វែងរកទិន្នន័យសាលា ដើម្បីយកឈ្មោះ "ខេត្ត"
+    const schoolData = await School.findOne({ name: req.body.high_school });
 
-        return res.status(200).json({
-            success: true,
-            studentId: savedUser._id,
-            message: "ចុះឈ្មោះរួចរាល់ហើយបង! 🎉",
-        });
-    } catch (err) {
-        console.error("❌ Error:", err.message);
-        let msg = "មានបញ្ហាបច្ចេកទេស!";
-        if (err.code === 11000) msg = "លេខទូរស័ព្ទនេះមានរួចហើយ!";
-        return res.status(400).json({ success: false, message: msg });
-    }
+    // 3. កំណត់ឈ្មោះខេត្ត (បើរកឃើញយកតាមសាលា, បើអត់ឃើញដាក់ "ផ្សេងៗ")
+    const studentProvince = schoolData ? schoolData.province : "ផ្សេងៗ";
+
+    // 4. បង្កើតសិស្សថ្មី ដោយបញ្ចូលខេត្តទៅជាមួយ
+    const newUser = new Participant({
+      ...req.body,            // យកទិន្នន័យទាំងអស់ពី Form (ឈ្មោះ, ភេទ, លេខ...)
+      province: studentProvince // 🔥 បន្ថែមខេត្តដែលបានរកឃើញចូលទៅ
+    });
+
+    const savedUser = await newUser.save();
+
+    // រក្សាទុកក្នុង Session
+    req.session.studentId = savedUser._id;
+
+    return res.status(200).json({
+      success: true,
+      studentId: savedUser._id,
+      message: "ចុះឈ្មោះរួចរាល់ហើយ! 🎉",
+    });
+
+  } catch (err) {
+    console.error("❌ Error:", err.message);
+    let msg = "មានបញ្ហាបច្ចេកទេស!";
+    
+    // ដោះស្រាយបញ្ហាលេខទូរស័ព្ទស្ទួន
+    if (err.code === 11000) msg = "លេខទូរស័ព្ទនេះមានរួចហើយ!";
+    
+    return res.status(400).json({ success: false, message: msg });
+  }
 };
 
 // exports.getStudentProfile = async (req, res) => {
@@ -179,8 +230,8 @@ exports.registerParticipant = async (req, res) => {
 //                                       .sort({ scannedAt: -1 }); // រៀបយកអាថ្មីបំផុតមកដាក់លើគេ
 
 //         // ៣. បោះទិន្នន័យ history ទៅឱ្យ View
-//         res.render("student/studentProfile", { 
-//             student, 
+//         res.render("student/studentProfile", {
+//             student,
 //             history, // <--- បោះទៅឱ្យ EJS
 //             title: "កាតវត្តមាន - " + student.name_en,
 //             studentId: student._id,
@@ -194,74 +245,78 @@ exports.registerParticipant = async (req, res) => {
 //   }
 
 exports.getStudentProfile = async (req, res) => {
-    try {
-        const student = await Participant.findById(req.params.id);
-        if (!student) return res.redirect("/register");
+  try {
+    const student = await Participant.findById(req.params.id);
+    if (!student) return res.redirect("/register");
 
-        // 🔥 កែត្រង់នេះ៖ ប្រើ "participantId" មិនមែន "studentId" ទេ!
-        const history = await Attendance.find({ participantId: student._id }) 
-                                      .populate('programId')
-                                      .sort({ createdAt: -1 }); // យកអាថ្មីបំផុតមកលើ
+    // 🔥 កែត្រង់នេះ៖ ប្រើ "participantId" មិនមែន "studentId" ទេ!
+    const history = await Attendance.find({ participantId: student._id })
+      .populate("programId")
+      .sort({ createdAt: -1 }); // យកអាថ្មីបំផុតមកលើ
 
-        res.render("student/studentProfile", { 
-            student,
-            history, // បោះទិន្នន័យទៅឱ្យ View
-            title: "Digital Pass - " + student.name_en,
-            studentId: student._id,
-            isAdmin: false
-        });
-
-    } catch (err) {
-        console.error("Error:", err);
-        res.redirect("/register");
-    }
+    res.render("student/studentProfile", {
+      student,
+      history, // បោះទិន្នន័យទៅឱ្យ View
+      title: "Digital Pass - " + student.name_en,
+      studentId: student._id,
+      isAdmin: false,
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    res.redirect("/register");
+  }
 };
 
 exports.updateStudentProfile = async (req, res) => {
-    try {
-        await Participant.findByIdAndUpdate(req.params.id, req.body);
-        res.json({ success: true, message: "ព័ត៌មានបានកែប្រែជោគជ័យ! 🎉" });
-    } catch (err) {
-        res.status(500).json({ success: false });
-    }
+  try {
+    await Participant.findByIdAndUpdate(req.params.id, req.body);
+    res.json({ success: true, message: "ព័ត៌មានបានកែប្រែជោគជ័យ! 🎉" });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
 };
 
 // ==========================================
 // 🤳 ផ្នែក SCAN ATTENDANCE (Smart Check-in)
 // ==========================================
 
-exports.processCheckIn = async (req, res) => {
-    const { studentId, programId } = req.body; // ទទួល ID ពី QR និង Program ពី Scanner
+// exports.processCheckIn = async (req, res) => {
+//   const { studentId, programId } = req.body; // ទទួល ID ពី QR និង Program ពី Scanner
 
-    try {
-        const student = await Participant.findById(studentId);
-        if (!student) return res.status(404).json({ success: false, message: "រកមិនឃើញសិស្ស!" });
+//   try {
+//     const student = await Participant.findById(studentId);
+//     if (!student)
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "រកមិនឃើញសិស្ស!" });
 
-        // ១. កំណត់ពេលវេលាថ្ងៃនេះ (Once Per Day Logic)
-        const start = new Date(); start.setHours(0,0,0,0);
-        const end = new Date(); end.setHours(23,59,59,999);
+//     // ១. កំណត់ពេលវេលាថ្ងៃនេះ (Once Per Day Logic)
+//     const start = new Date();
+//     start.setHours(0, 0, 0, 0);
+//     const end = new Date();
+//     end.setHours(23, 59, 59, 999);
 
-        // ២. ឆែកមើលថាតើគាត់បានស្កែនក្នុងកម្មវិធីនេះសម្រាប់ថ្ងៃនេះហើយឬនៅ?
-        const alreadyChecked = await Attendance.findOne({
-            participantId: studentId,
-            programId: programId,
-            createdAt: { $gte: start, $lte: end }
-        });
+//     // ២. ឆែកមើលថាតើគាត់បានស្កែនក្នុងកម្មវិធីនេះសម្រាប់ថ្ងៃនេះហើយឬនៅ?
+//     const alreadyChecked = await Attendance.findOne({
+//       participantId: studentId,
+//       programId: programId,
+//       createdAt: { $gte: start, $lte: end },
+//     });
 
-        if (alreadyChecked) {
-            return res.status(400).json({ 
-                success: false, 
-                message: "ប្អូនបានកត់វត្តមានក្នុងកម្មវិធីនេះរួចហើយ! 😂" 
-            });
-        }
+//     if (alreadyChecked) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "ប្អូនបានកត់វត្តមានក្នុងកម្មវិធីនេះរួចហើយ! 😂",
+//       });
+//     }
 
-        // ៣. រក្សាទុកវត្តមានថ្មី
-        const newRecord = new Attendance({ participantId: studentId, programId });
-        await newRecord.save();
+//     // ៣. រក្សាទុកវត្តមានថ្មី
+//     const newRecord = new Attendance({ participantId: studentId, programId });
+//     await newRecord.save();
 
-        res.json({ success: true, message: `ជោគជ័យ! សួស្តី ${student.name_kh}!` });
+//     res.json({ success: true, message: `ជោគជ័យ! សួស្តី ${student.name_kh}!` });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: "Server គាំងហើយបង!" });
+//   }
+// };
 
-    } catch (err) {
-        res.status(500).json({ success: false, message: "Server គាំងហើយបង!" });
-    }
-};

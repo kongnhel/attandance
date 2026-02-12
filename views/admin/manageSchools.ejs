@@ -1,0 +1,209 @@
+<%- include('../partials/header') %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<main class="max-w-4xl mx-auto p-6 md:p-10">
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-800">🏫 គ្រប់គ្រងបញ្ជីសាលា & Telegram</h1>
+        <p class="text-slate-400 text-sm font-bold">បន្ថែម ឬកែប្រែព័ត៌មានសាលា និងខេត្ត/ក្រុង</p>
+    </div>
+
+    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 mb-10">
+        <h2 class="text-lg font-bold text-indigo-600 mb-6">➕ បន្ថែមសាលាថ្មី</h2>
+        <form action="/admin/schools/add" method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">ឈ្មោះសាលា (High School Name)</label>
+                    <input type="text" name="name" required placeholder="ឧ. វិទ្យាល័យ ស្វាយចេក" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-indigo-500 font-bold text-slate-700">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">ខេត្ត/ក្រុង (Province)</label>
+                    
+                    <div id="provinceSelectWrapper">
+                        <select id="provinceSelect" onchange="checkProvince(this)" name="province" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-indigo-500 font-bold text-slate-700">
+                            <option value="បន្ទាយមានជ័យ">បន្ទាយមានជ័យ</option>
+                            <option value="បាត់ដំបង">បាត់ដំបង</option>
+                            <option value="សៀមរាប">សៀមរាប</option>
+                            <option value="ភ្នំពេញ">ភ្នំពេញ</option>
+                            <option value="ឧត្តរមានជ័យ">ឧត្តរមានជ័យ</option>
+                            <option value="ប៉ៃលិន">ប៉ៃលិន</option>
+                            <option disabled>──────────</option>
+                            <option value="new" class="text-indigo-600 font-bold">➕ បន្ថែមខេត្តផ្សេងទៀត (Add New)</option>
+                        </select>
+                    </div>
+
+                    <div id="provinceInputWrapper" class="hidden flex gap-2">
+                        <input type="text" id="provinceInput" disabled placeholder="វាយឈ្មោះខេត្តថ្មីនៅទីនេះ..." class="w-full px-4 py-3 rounded-xl bg-white border-2 border-indigo-100 outline-none focus:border-indigo-500 font-bold text-indigo-700 placeholder-indigo-300">
+                        <button type="button" onclick="resetProvince()" class="bg-slate-100 hover:bg-slate-200 text-slate-500 p-3 rounded-xl transition-colors" title="ត្រឡប់ទៅបញ្ជីវិញ">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Telegram Group Link</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-3 text-slate-400">🔗</span>
+                    <input type="url" name="telegramLink" required placeholder="https://t.me/+AbCd..." class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-indigo-500 font-medium text-slate-600">
+                </div>
+            </div>
+
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                រក្សាទុកសាលាថ្មី
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
+        <div class="px-8 py-6 bg-slate-50 border-b border-slate-100">
+            <h3 class="font-bold text-slate-700">បញ្ជីសាលាដែលមានស្រាប់ (<%= schools.length %>)</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-white border-b border-slate-100">
+                    <tr class="text-xs text-slate-400 uppercase">
+                        <th class="px-8 py-4">ឈ្មោះសាលា</th>
+                        <th class="px-6 py-4">Telegram Link</th>
+                        <th class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <% schools.forEach(school => { %>
+                        <tr class="hover:bg-slate-50 group">
+                            <td class="px-8 py-4">
+                                <div class="font-bold text-slate-700"><%= school.name %></div>
+                                <div class="text-xs text-slate-400 font-bold bg-slate-100 inline-block px-2 py-0.5 rounded mt-1"><%= school.province %></div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="<%= school.telegramLink %>" target="_blank" class="text-xs text-blue-500 hover:underline truncate max-w-[200px] block">
+                                    <%= school.telegramLink %>
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 text-right space-x-2">
+                                <button onclick="openEditModal('<%= school._id %>', '<%= school.name %>', '<%= school.province %>', '<%= school.telegramLink %>')" class="text-indigo-400 hover:bg-indigo-50 p-2 rounded-lg transition-all" title="កែប្រែ">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                </button>
+                                <button onclick="deleteSchool('<%= school._id %>')" class="text-rose-400 hover:bg-rose-50 p-2 rounded-lg transition-all" title="លុប">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+    // --- 🌍 មុខងារគ្រប់គ្រង Dropdown ខេត្ត ---
+    const provinceSelect = document.getElementById('provinceSelect');
+    const provinceInput = document.getElementById('provinceInput');
+    const selectWrapper = document.getElementById('provinceSelectWrapper');
+    const inputWrapper = document.getElementById('provinceInputWrapper');
+
+    function checkProvince(select) {
+        if (select.value === 'new') {
+            // ប្តូរពី Select ទៅ Input
+            selectWrapper.classList.add('hidden');
+            inputWrapper.classList.remove('hidden');
+            
+            // ប្តូរ attribute "name" ដើម្បីឱ្យ Server ទទួលតម្លៃពី Input វិញ
+            provinceSelect.removeAttribute('name');
+            provinceInput.setAttribute('name', 'province');
+            provinceInput.removeAttribute('disabled');
+            provinceInput.focus();
+        }
+    }
+
+    function resetProvince() {
+        // ត្រឡប់មក Select វិញ
+        inputWrapper.classList.add('hidden');
+        selectWrapper.classList.remove('hidden');
+        
+        provinceSelect.value = 'បន្ទាយមានជ័យ'; // Default value
+        
+        // ប្តូរ "name" មកឱ្យ Select វិញ
+        provinceInput.removeAttribute('name');
+        provinceInput.setAttribute('disabled', 'true');
+        provinceSelect.setAttribute('name', 'province');
+    }
+
+    // --- ✏️ មុខងារ Edit (Update) ---
+    async function openEditModal(id, name, province, link) {
+        const { value: formValues } = await Swal.fire({
+            title: '✏️ កែប្រែព័ត៌មាន',
+            html: `
+                <div class="text-left space-y-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400">ឈ្មោះសាលា</label>
+                        <input id="swal-name" class="swal2-input !m-0 !w-full" value="${name}">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400">ខេត្ត/ក្រុង</label>
+                        <input id="swal-province" class="swal2-input !m-0 !w-full" value="${province}">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400">Telegram Link</label>
+                        <input id="swal-link" class="swal2-input !m-0 !w-full" value="${link}">
+                    </div>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonColor: '#4f46e5',
+            confirmButtonText: 'រក្សាទុក',
+            preConfirm: () => {
+                return {
+                    name: document.getElementById('swal-name').value,
+                    province: document.getElementById('swal-province').value,
+                    telegramLink: document.getElementById('swal-link').value
+                }
+            }
+        });
+
+        if (formValues) {
+            // Submit ទិន្នន័យទៅ Server
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/admin/schools/update/' + id;
+
+            for (const key in formValues) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = formValues[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // --- 🗑️ មុខងារ Delete ---
+    async function deleteSchool(id) {
+        const result = await Swal.fire({
+            title: 'លុបសាលា?',
+            text: "តើអ្នកប្រាកដថាចង់លុបសាលានេះចេញមែនទេ?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f43f5e',
+            confirmButtonText: 'Yes, Delete'
+        });
+
+        if (result.isConfirmed) {
+            const res = await fetch('/admin/schools/delete/' + id, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                Swal.fire('Error', 'មានបញ្ហាក្នុងការលុប!', 'error');
+            }
+        }
+    }
+</script>
+
+<%- include('../partials/footer') %>
